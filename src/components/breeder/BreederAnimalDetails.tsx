@@ -1,4 +1,4 @@
-import { ArrowLeft, Eye, Plus, Download, Trash2, FileText, ZoomIn, ZoomOut, RefreshCw, ChevronDown, Filter, X, Upload, ChevronLeft, ChevronRight, Video, Trophy, Calendar, Link, MoreVertical, Edit, Share2 } from 'lucide-react';
+import { ArrowLeft, Eye, Plus, Download, Trash2, FileText, ZoomIn, ZoomOut, RefreshCw, ChevronDown, Filter, X, Upload, ChevronLeft, ChevronRight, Video, Trophy, Calendar, Link, MoreVertical, Edit, Share2, MapPin, Home, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { GenealogyTree } from './GenealogyTree';
@@ -729,10 +729,7 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                       {animal.statusAtividade === 'Inativo' && animal.dataInativacao && (
                         <InfoRow label="Data da Inativação" value={formatBirthDate(animal.dataInativacao)} />
                       )}
-                      {animal.localizacao && <InfoRow label="Localização" value={animal.localizacao} />}
-                      {animal.servicoTipo && animal.localizacao === 'Serviço' && (
-                        <InfoRow label="Tipo de Serviço" value={animal.servicoTipo} />
-                      )}
+                      {animal.localizacao && <LocationBadge localizacao={animal.localizacao} servicoTipo={animal.servicoTipo} />}
                     </div>
                     
                     {/* Coluna 2: Identificação e genealogia */}
@@ -2339,22 +2336,22 @@ function AddAwardModal({ onClose }: { onClose: () => void }) {
             />
           </div>
 
-          {/* Upload de Fotos */}
+          {/* Upload de Fotos e Documentos */}
           <div>
             <label className="text-sm text-foreground dark:text-white mb-2 block">
-              Fotos (Troféu, Certificado, Evento)
+              Fotos e Documentos (Troféu, Certificado, Evento)
             </label>
             <div className="border-2 border-dashed border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg p-6 text-center hover:border-primary dark:hover:border-white transition-colors">
               <Upload className="w-12 h-12 text-muted-foreground dark:text-[#99a1af] mx-auto mb-3" />
               <p className="text-sm text-foreground dark:text-white mb-1">
-                Clique ou arraste fotos aqui
+                Clique ou arraste fotos e documentos aqui
               </p>
               <p className="text-xs text-muted-foreground dark:text-[#99a1af] mb-3">
-                PNG, JPG até 10MB
+                Fotos: PNG, JPG | Documentos: PDF | Até 10MB cada
               </p>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.pdf"
                 multiple
                 onChange={handlePhotoUpload}
                 className="hidden"
@@ -2364,7 +2361,7 @@ function AddAwardModal({ onClose }: { onClose: () => void }) {
                 htmlFor="award-photos"
                 className="inline-block px-4 py-2 bg-muted dark:bg-[#0d0d0d] text-foreground dark:text-white rounded-lg cursor-pointer hover:bg-accent dark:hover:bg-[#2a2a2a] transition-colors"
               >
-                Escolher Fotos
+                Escolher Arquivos
               </label>
             </div>
 
@@ -2573,6 +2570,38 @@ function InfoRow({ label, value, valueClassName }: { label: string; value: strin
     <div className="flex justify-between py-2 border-b border-border dark:border-[rgba(255,255,255,0.1)]">
       <span className="text-muted-foreground dark:text-[#99a1af]">{label}</span>
       <span className={valueClassName || "text-foreground dark:text-white"}>{value}</span>
+    </div>
+  );
+}
+
+function LocationBadge({ localizacao, servicoTipo }: { localizacao: string; servicoTipo?: string }) {
+  const isBaia = localizacao.toLowerCase().includes('baia');
+  const isServico = localizacao.toLowerCase().includes('serviço');
+  
+  return (
+    <div className="py-2">
+      <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2">Localização Atual</p>
+      <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg ${
+        isBaia
+          ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-medium'
+          : isServico
+          ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
+          : 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+      }`}>
+        {isBaia ? (
+          <Home className="w-4 h-4" />
+        ) : isServico ? (
+          <AlertCircle className="w-4 h-4" />
+        ) : (
+          <MapPin className="w-4 h-4" />
+        )}
+        <span>{localizacao}</span>
+      </div>
+      {servicoTipo && isServico && (
+        <p className="text-xs text-muted-foreground dark:text-[#99a1af] mt-2">
+          Tipo: {servicoTipo}
+        </p>
+      )}
     </div>
   );
 }

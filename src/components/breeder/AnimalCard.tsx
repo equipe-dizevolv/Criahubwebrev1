@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Edit, GitBranch, Baby, Award, Video } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, GitBranch, Baby, Award, Video, MapPin, Home } from 'lucide-react';
 import { useState } from 'react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 

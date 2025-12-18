@@ -13,7 +13,7 @@ interface LocationHistory {
   time: string;
   previousLocation: string;
   newLocation: string;
-  reason: string;
+  reason?: string; // Motivo opcional
   registeredBy: string;
   notes?: string;
 }
@@ -245,7 +245,7 @@ export function AnimalLocationSection({
                     </td>
                     <td className="py-4 px-4">
                       <div className="text-sm text-foreground dark:text-white">
-                        {entry.reason}
+                        {entry.reason || <span className="text-muted-foreground dark:text-[#99a1af] italic">Sem motivo informado</span>}
                       </div>
                       {entry.notes && (
                         <div className="text-xs text-muted-foreground dark:text-[#99a1af] mt-1">

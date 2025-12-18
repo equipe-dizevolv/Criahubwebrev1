@@ -1,4 +1,6 @@
-import { X, Download, Upload, Trophy, Medal, Award as AwardIcon, Calendar, MapPin } from 'lucide-react';
+import { X, Download, Upload, Trophy, Medal, Award as AwardIcon, Calendar, MapPin, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { RegisterAwardModal } from './RegisterAwardModal';
 
 interface Award {
   id: number;
@@ -21,6 +23,8 @@ interface AwardsDetailModalProps {
 }
 
 export function AwardsDetailModal({ awards, animalName, onClose }: AwardsDetailModalProps) {
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  
   // Calcular estatísticas
   const totalAwards = awards.length;
   const totalPoints = awards.reduce((sum, award) => sum + (award.points || 0), 0);
@@ -226,8 +230,28 @@ export function AwardsDetailModal({ awards, animalName, onClose }: AwardsDetailM
             <Download className="w-4 h-4" />
             Exportar Relatório (PDF)
           </button>
+          <button
+            onClick={() => setShowRegisterModal(true)}
+            className="flex-1 px-4 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Registrar Nova Premiação
+          </button>
         </div>
       </div>
+      
+      {/* Modal de Registro */}
+      {showRegisterModal && (
+        <RegisterAwardModal
+          animalName={animalName}
+          onClose={() => setShowRegisterModal(false)}
+          onSave={(data) => {
+            console.log('Nova premiação:', data);
+            // Em produção, salvar no backend
+            setShowRegisterModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

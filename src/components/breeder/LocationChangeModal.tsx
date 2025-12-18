@@ -11,7 +11,7 @@ export interface LocationChangeData {
   locationType: 'Baia' | 'Pasto' | 'Serviço';
   locationName: string;
   serviceType?: 'Reprodução' | 'Trabalho' | 'Repouso' | 'Outro';
-  reason: string;
+  reason?: string; // Campo opcional - nem sempre há motivo específico
   date: string;
   time: string;
   notes?: string;
@@ -21,7 +21,6 @@ export function LocationChangeModal({ currentLocation, onClose, onSave }: Locati
   const [formData, setFormData] = useState<LocationChangeData>({
     locationType: 'Baia',
     locationName: '',
-    reason: '',
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
   });
@@ -157,12 +156,11 @@ export function LocationChangeModal({ currentLocation, onClose, onSave }: Locati
           {/* Motivo */}
           <div>
             <label className="block text-sm text-foreground dark:text-white mb-2">
-              Motivo da Mudança *
+              Motivo da Mudança (Opcional)
             </label>
             <input
               type="text"
-              required
-              value={formData.reason}
+              value={formData.reason || ''}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
               placeholder="Ex: Cobertura programada, Descanso pós-competição, etc."
               className="w-full px-4 py-3 bg-white dark:bg-[#0d0d0d] border border-gray-300 dark:border-[rgba(255,255,255,0.1)] rounded-lg text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-[#99a1af] focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white/20"
