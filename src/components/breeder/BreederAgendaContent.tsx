@@ -2,11 +2,10 @@ import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, MapPin, Cloc
 import { useState } from 'react';
 import { NativeSelect } from '../ui/native-select';
 import { AwardsHistoryTab } from './AwardsHistoryTab';
-import { SalesHistoryTab } from './SalesHistoryTab';
 import { AddServiceEventModal } from './AddServiceEventModal';
 import { toast } from 'sonner@2.0.3';
 
-type AgendaTab = 'services' | 'events' | 'awards' | 'sales';
+type AgendaTab = 'services' | 'events' | 'awards';
 
 export function BreederAgendaContent() {
   const [activeTab, setActiveTab] = useState<AgendaTab>('services');
@@ -238,17 +237,6 @@ export function BreederAgendaContent() {
           <Trophy className="w-4 h-4" />
           Premiações
         </button>
-        <button
-          onClick={() => setActiveTab('sales')}
-          className={`px-6 py-3 border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'sales'
-              ? 'border-white dark:border-white text-foreground dark:text-white'
-              : 'border-transparent text-muted-foreground dark:text-[#99a1af] hover:text-foreground dark:hover:text-white'
-          }`}
-        >
-          <DollarSign className="w-4 h-4" />
-          Vendas
-        </button>
       </div>
 
       {/* Tab Content */}
@@ -408,10 +396,6 @@ export function BreederAgendaContent() {
 
       {activeTab === 'awards' && (
         <AwardsHistoryTab />
-      )}
-
-      {activeTab === 'sales' && (
-        <SalesHistoryTab />
       )}
     </div>
   );

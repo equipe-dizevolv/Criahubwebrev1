@@ -377,26 +377,6 @@ export function HealthDashboard({ animalId, animalName }: HealthDashboardProps) 
           </div>
         </div>
       </div>
-
-      {/* Atalhos Rápidos */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <button className="bg-card dark:bg-[#1a1a1a] rounded-xl p-4 border border-border dark:border-[rgba(255,255,255,0.1)] hover:border-[#3a3a3a] transition-all text-left">
-          <Stethoscope className="w-8 h-8 text-primary dark:text-white mb-2" />
-          <p className="text-sm text-foreground dark:text-white font-medium">Registrar Procedimento</p>
-        </button>
-        <button className="bg-card dark:bg-[#1a1a1a] rounded-xl p-4 border border-border dark:border-[rgba(255,255,255,0.1)] hover:border-[#3a3a3a] transition-all text-left">
-          <Syringe className="w-8 h-8 text-primary dark:text-white mb-2" />
-          <p className="text-sm text-foreground dark:text-white font-medium">Registrar Vacina</p>
-        </button>
-        <button className="bg-card dark:bg-[#1a1a1a] rounded-xl p-4 border border-border dark:border-[rgba(255,255,255,0.1)] hover:border-[#3a3a3a] transition-all text-left">
-          <FileText className="w-8 h-8 text-primary dark:text-white mb-2" />
-          <p className="text-sm text-foreground dark:text-white font-medium">Registrar Exame</p>
-        </button>
-        <button className="bg-card dark:bg-[#1a1a1a] rounded-xl p-4 border border-border dark:border-[rgba(255,255,255,0.1)] hover:border-[#3a3a3a] transition-all text-left">
-          <Calendar className="w-8 h-8 text-primary dark:text-white mb-2" />
-          <p className="text-sm text-foreground dark:text-white font-medium">Agendar Consulta</p>
-        </button>
-      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { FileText, Download, Eye, Trash2, Plus, Filter, Search, Image as ImageIcon, File, X } from 'lucide-react';
 import { useState } from 'react';
 import { AddDocumentModal, DocumentData } from './AddDocumentModal';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface Document {
   id: number;
@@ -23,6 +24,8 @@ export function AnimalDocumentsSection({ documents = [] }: AnimalDocumentsSectio
   const [showPreview, setShowPreview] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [localDocuments, setLocalDocuments] = useState(documents);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
 
   // Dados mockados se não houver documentos
   const mockDocuments: Document[] = localDocuments.length > 0 ? localDocuments : [
@@ -218,6 +221,10 @@ export function AnimalDocumentsSection({ documents = [] }: AnimalDocumentsSectio
                     <Download className="w-4 h-4 text-foreground dark:text-white" />
                   </button>
                   <button
+                    onClick={() => {
+                      setDocumentToDelete(doc);
+                      setShowDeleteModal(true);
+                    }}
                     className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     title="Excluir"
                   >
@@ -308,6 +315,99 @@ export function AnimalDocumentsSection({ documents = [] }: AnimalDocumentsSectio
           </div>
         </div>
       )}
+
+      {/* Modal Excluir Documento */}
+      {showDeleteModal && documentToDelete && (
+        <DeleteDocumentModal
+          document={documentToDelete}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setDocumentToDelete(null);
+          }}
+          onConfirm={() => {
+            setLocalDocuments(mockDocuments.filter(d => d.id !== documentToDelete.id));
+            setShowDeleteModal(false);
+            setDocumentToDelete(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// Modal de Confirmação de Exclusão
+function DeleteDocumentModal({ 
+  document, 
+  onClose, 
+  onConfirm 
+}: { 
+  document: Document; 
+  onClose: () => void; 
+  onConfirm: () => void; 
+}) {
+  // Adiciona suporte à tecla ESC (acessibilidade WCAG 2.1)
+  useEscapeKey(onClose);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-[rgba(255,255,255,0.1)]">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg text-foreground dark:text-white font-medium mb-1">
+                Excluir Documento
+              </h3>
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af]">
+                Esta ação não pode ser desfeita.
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-foreground dark:text-white" />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="bg-gray-50 dark:bg-[#0d0d0d] rounded-lg p-4 mb-6">
+            <p className="text-sm text-foreground dark:text-white font-medium mb-1">
+              {document.name}
+            </p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-[#99a1af]">
+              <span>{document.type}</span>
+              <span>•</span>
+              <span>{document.fileType}</span>
+              <span>•</span>
+              <span>{document.size}</span>
+            </div>
+          </div>
+
+          <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-6">
+            Tem certeza de que deseja excluir este documento? Esta ação é permanente e não pode ser desfeita.
+          </p>
+
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-[rgba(255,255,255,0.1)] text-foreground dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-[#0d0d0d] transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 px-4 py-2.5 bg-red-600 dark:bg-red-900 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors flex items-center justify-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -59,6 +59,17 @@ interface Animal {
   haras: string;
   status: string;
   statusColor: string;
+  // NOVOS CAMPOS: Gestão de Status no Plantel (Ativo/Inativo)
+  statusAtividade?: 'Ativo' | 'Inativo'; // Status no Plantel
+  motivoInativacao?: 'Vendido' | 'Óbito' | 'Doado' | 'Transferido'; // Motivo da inativação
+  dataInativacao?: string; // Data da inativação (ISO format)
+  statusHistorico?: Array<{ // Histórico de mudanças de status
+    data: string;
+    statusAnterior: string;
+    statusNovo: string;
+    motivo?: string;
+    usuario: string;
+  }>;
   localizacao?: string;  // Baia, Pasto, Serviço
   servicoTipo?: string;  // Reprodução, Trabalho, Repouso, Outro
   filhos?: number;  // Contador de descendentes
@@ -126,6 +137,10 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
     type: 'Marcha' as Video['type'],
     visibility: 'Público' as Video['visibility'],
   });
+  // NOVOS ESTADOS: Modal de Inativação
+  const [showInactivateModal, setShowInactivateModal] = useState(false);
+  const [inactivateReason, setInactivateReason] = useState<'Vendido' | 'Óbito' | 'Doado' | 'Transferido'>('Vendido');
+  const [inactivateDate, setInactivateDate] = useState(new Date().toISOString().split('T')[0]);
   // FASE 33-37: Estados para Premiações
   const [showAddAwardModal, setShowAddAwardModal] = useState(false);
   const [showAwardDetailsModal, setShowAwardDetailsModal] = useState(false);
@@ -163,6 +178,20 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
       prev === (animal.images?.length || 1) - 1 ? 0 : prev + 1
     );
   };
+
+  // NOVO: useEffect para fechar modal com tecla ESC
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (showInactivateModal) {
+          setShowInactivateModal(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [showInactivateModal]);
 
   // Ensure we have images array
   const animalImages = animal.images || [animal.image];
@@ -555,9 +584,20 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
             <h1 className="text-2xl text-foreground dark:text-white mb-2">{animal.name}</h1>
             <p className="text-muted-foreground dark:text-[#99a1af]">{animal.registry}</p>
           </div>
-          <button className="w-full lg:w-auto px-6 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2" onClick={onEdit}>
-            Editar Animal
-          </button>
+          <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+            {animal.statusAtividade !== 'Inativo' && (
+              <button
+                onClick={() => setShowInactivateModal(true)}
+                className="w-full md:w-auto px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <X className="w-5 h-5" />
+                Marcar como Inativo
+              </button>
+            )}
+            <button className="w-full md:w-auto px-6 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2" onClick={onEdit}>
+              Editar Animal
+            </button>
+          </div>
         </div>
       </div>
 
@@ -676,7 +716,19 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                       <InfoRow label="Categoria" value={animal.category} />
                       <InfoRow label="Idade" value={animal.age} />
                       {animal.birthDate && <InfoRow label="Nascimento" value={formatBirthDate(animal.birthDate)} />}
-                      <InfoRow label="Status" value={animal.status} />
+                      <InfoRow label="Status Reprodutivo" value={animal.status} />
+                      {/* Novo: Status no Plantel */}
+                      <InfoRow 
+                        label="Status no Plantel" 
+                        value={animal.statusAtividade || 'Ativo'}
+                        valueClassName={animal.statusAtividade === 'Inativo' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}
+                      />
+                      {animal.statusAtividade === 'Inativo' && animal.motivoInativacao && (
+                        <InfoRow label="Motivo" value={animal.motivoInativacao} />
+                      )}
+                      {animal.statusAtividade === 'Inativo' && animal.dataInativacao && (
+                        <InfoRow label="Data da Inativação" value={formatBirthDate(animal.dataInativacao)} />
+                      )}
                       {animal.localizacao && <InfoRow label="Localização" value={animal.localizacao} />}
                       {animal.servicoTipo && animal.localizacao === 'Serviço' && (
                         <InfoRow label="Tipo de Serviço" value={animal.servicoTipo} />
@@ -737,6 +789,45 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                   </div>
                 </div>
               </div>
+
+              {/* NOVA SEÇÃO: Histórico de Mudanças de Status */}
+              {animal.statusHistorico && animal.statusHistorico.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-foreground dark:text-white">Histórico de Mudanças de Status</h4>
+                  </div>
+                  <div className="space-y-2">
+                    {animal.statusHistorico.map((historico, index) => (
+                      <div key={index} className="p-4 bg-muted dark:bg-[#0d0d0d] rounded-lg border-l-4 border-primary dark:border-white">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                          <div className="flex-1">
+                            <p className="text-foreground dark:text-white">
+                              <span className="text-red-600 dark:text-red-400">{historico.statusAnterior}</span>
+                              {' → '}
+                              <span className={historico.statusNovo === 'Inativo' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}>
+                                {historico.statusNovo}
+                              </span>
+                            </p>
+                            {historico.motivo && (
+                              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mt-1">
+                                Motivo: {historico.motivo}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm text-muted-foreground dark:text-[#99a1af]">
+                              {formatBirthDate(historico.data)}
+                            </p>
+                            <p className="text-xs text-muted-foreground dark:text-[#99a1af]">
+                              {historico.usuario}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* FASE 25-27: Seção Reprodução */}
               {(animal.reproductionType || animal.sex === 'Macho' || animal.sex === 'Fêmea') && (
@@ -1610,6 +1701,90 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
         />
       )}
 
+      {/* NOVO: Modal Marcar como Inativo */}
+      {showInactivateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card dark:bg-[#1a1a1a] rounded-2xl p-6 max-w-md w-full border border-border dark:border-[rgba(255,255,255,0.1)]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl text-foreground dark:text-white">Marcar Animal como Inativo</h2>
+              <button
+                onClick={() => setShowInactivateModal(false)}
+                className="text-muted-foreground dark:text-[#99a1af] hover:text-foreground dark:hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-foreground dark:text-white mb-2">
+                  Você está prestes a marcar <strong>{animal.name}</strong> como inativo.
+                </p>
+                <p className="text-sm text-muted-foreground dark:text-[#99a1af]">
+                  Esta ação registrará o animal no histórico como inativo e ele será filtrado nas listagens.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm text-muted-foreground dark:text-[#99a1af] mb-2">
+                  Motivo da Inativação
+                </label>
+                <NativeSelect
+                  value={inactivateReason}
+                  onChange={(e) => setInactivateReason(e.target.value as 'Vendido' | 'Óbito' | 'Doado' | 'Transferido')}
+                >
+                  <option value="Vendido">Vendido</option>
+                  <option value="Óbito">Óbito</option>
+                  <option value="Doado">Doado</option>
+                  <option value="Transferido">Transferido</option>
+                </NativeSelect>
+              </div>
+
+              <div>
+                <label className="block text-sm text-muted-foreground dark:text-[#99a1af] mb-2">
+                  Data da Inativação
+                </label>
+                <input
+                  type="date"
+                  value={inactivateDate}
+                  onChange={(e) => setInactivateDate(e.target.value)}
+                  className="w-full h-12 px-4 bg-background dark:bg-[#0d0d0d] border border-border dark:border-[#3a3a3a] rounded-xl text-foreground dark:text-white focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white/20"
+                />
+              </div>
+
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <p className="text-sm text-red-800 dark:text-red-200">
+                  <strong>Atenção:</strong> Esta ação criará um registro permanente no histórico do animal.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-3 mt-6">
+              <button
+                onClick={() => setShowInactivateModal(false)}
+                className="flex-1 px-6 py-3 border border-border dark:border-[rgba(255,255,255,0.1)] text-foreground dark:text-white rounded-lg hover:bg-muted dark:hover:bg-[#0d0d0d] transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  // Aqui será implementada a lógica de salvar
+                  console.log('Marcar como inativo:', {
+                    animalId: animal.id,
+                    motivo: inactivateReason,
+                    data: inactivateDate
+                  });
+                  setShowInactivateModal(false);
+                }}
+                className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Confirmar Inativação
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* FASE 32: Player de Vídeo Fullscreen */}
       {showVideoPlayer && selectedVideo && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
@@ -2393,11 +2568,11 @@ function AwardDetailsModal({ award, onClose }: { award: Award; onClose: () => vo
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({ label, value, valueClassName }: { label: string; value: string; valueClassName?: string }) {
   return (
     <div className="flex justify-between py-2 border-b border-border dark:border-[rgba(255,255,255,0.1)]">
       <span className="text-muted-foreground dark:text-[#99a1af]">{label}</span>
-      <span className="text-foreground dark:text-white">{value}</span>
+      <span className={valueClassName || "text-foreground dark:text-white"}>{value}</span>
     </div>
   );
 }

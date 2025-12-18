@@ -45,6 +45,17 @@ interface Animal {
   haras: string;
   status: string;
   statusColor: string;
+  // NOVOS CAMPOS: Gestão de Status no Plantel (Ativo/Inativo)
+  statusAtividade: 'Ativo' | 'Inativo'; // Status no Plantel
+  motivoInativacao?: 'Vendido' | 'Óbito' | 'Doado' | 'Transferido'; // Motivo da inativação
+  dataInativacao?: string; // Data da inativação (ISO format)
+  statusHistorico?: Array<{ // Histórico de mudanças de status
+    data: string;
+    statusAnterior: string;
+    statusNovo: string;
+    motivo?: string;
+    usuario: string;
+  }>;
   localizacao?: string; // Baia, Pasto, Serviço
   servicoTipo?: string; // Reprodução, Trabalho, Repouso, Outro
   filhos?: number; // Contador de descendentes
@@ -100,6 +111,7 @@ export function BreederPlantelContent() {
       haras: 'Vale Verde', 
       status: 'Ativo', 
       statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo',
       filhos: 12,
       premiacoes: 5,
       image: 'https://images.unsplash.com/photo-1656964353220-99aa5acc47e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibGFjayUyMHN0YWxsaW9uJTIwaG9yc2V8ZW58MXx8fHwxNzYzNTAwMTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
@@ -128,7 +140,8 @@ export function BreederPlantelContent() {
       age: '7 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1610137856583-e71966c4351d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicm93biUyMGhvcnNlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzYzNDA4Njk3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1610137856583-e71966c4351d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicm93biUyMGhvcnNlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzYzNDA4Njk3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -156,7 +169,8 @@ export function BreederPlantelContent() {
       age: '12 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1724783483178-79f7ef970c6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMGhvcnNlJTIwbWFyZXxlbnwxfHx8fDE3NjM1MDAxMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1724783483178-79f7ef970c6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMGhvcnNlJTIwbWFyZXxlbnwxfHx8fDE3NjM1MDAxMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -181,7 +195,8 @@ export function BreederPlantelContent() {
       age: '11 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -206,7 +221,8 @@ export function BreederPlantelContent() {
       age: '10 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1751715773655-2140695a3a9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmV5JTIwaG9yc2UlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1751715773655-2140695a3a9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmV5JTIwaG9yc2UlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -233,7 +249,8 @@ export function BreederPlantelContent() {
       age: '9 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1657150946362-3aee0bbc8163?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWxvbWlubyUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1657150946362-3aee0bbc8163?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWxvbWlubyUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -260,6 +277,7 @@ export function BreederPlantelContent() {
       haras: 'Vale Verde', 
       status: 'Gestante', 
       statusColor: 'bg-pink-500',
+      statusAtividade: 'Ativo',
       reproductionType: 'Doadora',
       activeForReproduction: true,
       coverageCount: 5,
@@ -293,6 +311,7 @@ export function BreederPlantelContent() {
       haras: 'Vale Verde', 
       status: 'Ativo', 
       statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo',
       reproductionType: 'Garanhão',
       activeForReproduction: true,
       coverageCount: 18,
@@ -324,7 +343,8 @@ export function BreederPlantelContent() {
       age: '5 anos', 
       haras: 'Vale Verde', 
       status: 'Em Cobertura', 
-      statusColor: 'bg-blue-500', 
+      statusColor: 'bg-blue-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1657150946362-3aee0bbc8163?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWxvbWlubyUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1657150946362-3aee0bbc8163?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWxvbWlubyUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -349,7 +369,8 @@ export function BreederPlantelContent() {
       age: '1 ano', 
       haras: 'Vale Verde', 
       status: 'Em Crescimento', 
-      statusColor: 'bg-yellow-500', 
+      statusColor: 'bg-yellow-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1648242977013-6f21e5a695f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMGhvcnNlJTIwZm9hbHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1648242977013-6f21e5a695f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMGhvcnNlJTIwZm9hbHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -372,7 +393,8 @@ export function BreederPlantelContent() {
       age: '3 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -397,7 +419,8 @@ export function BreederPlantelContent() {
       age: '5 anos', 
       haras: 'Vale Verde', 
       status: 'Ativo', 
-      statusColor: 'bg-green-500', 
+      statusColor: 'bg-green-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1724783483178-79f7ef970c6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMGhvcnNlJTIwbWFyZXxlbnwxfHx8fDE3NjM1MDAxMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1724783483178-79f7ef970c6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMGhvcnNlJTIwbWFyZXxlbnwxfHx8fDE3NjM1MDAxMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -422,7 +445,8 @@ export function BreederPlantelContent() {
       age: '2 anos', 
       haras: 'Vale Verde', 
       status: 'Em Crescimento', 
-      statusColor: 'bg-yellow-500', 
+      statusColor: 'bg-yellow-500',
+      statusAtividade: 'Ativo', 
       image: 'https://images.unsplash.com/photo-1751715773655-2140695a3a9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmV5JTIwaG9yc2UlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1751715773655-2140695a3a9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmV5JTIwaG9yc2UlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjM1MDAxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
@@ -445,9 +469,73 @@ export function BreederPlantelContent() {
       haras: 'Vale Verde', 
       status: 'Gestante', 
       statusColor: 'bg-pink-500', 
+      statusAtividade: 'Ativo',
       image: 'https://images.unsplash.com/photo-1748212550010-74453d20e3ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXklMjBob3JzZSUyMHJ1bm5pbmd8ZW58MXx8fHwxNzYzNTAwMTE0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
       images: [
         'https://images.unsplash.com/photo-1748212550010-74453d20e3ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXklMjBob3JzZSUyMHJ1bm5pbmd8ZW58MXx8fHwxNzYzNTAwMTE0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      ] 
+    },
+    // ANIMAIS INATIVOS - Exemplos de vendas
+    { 
+      id: 9, 
+      name: 'Estrela da Manhã', 
+      registry: 'MM-2018-5432',
+      chip: '982000201854320',
+      marca: 'VV-009',
+      sex: 'Fêmea',
+      birthDate: '2018-06-15',
+      category: 'Reprodutora', 
+      age: '6 anos', 
+      haras: 'Vale Verde', 
+      status: 'Inativo', 
+      statusColor: 'bg-gray-500',
+      statusAtividade: 'Inativo',
+      motivoInativacao: 'Vendido',
+      dataInativacao: '2024-11-20',
+      statusHistorico: [
+        {
+          data: '2024-11-20',
+          statusAnterior: 'Ativo',
+          statusNovo: 'Inativo',
+          motivo: 'Vendido',
+          usuario: 'João Silva (Criador)'
+        }
+      ],
+      filhos: 4,
+      image: 'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
+      images: [
+        'https://images.unsplash.com/photo-1667992711873-4bd87cbfbb65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGVzdG51dCUyMGhvcnNlfGVufDF8fHx8MTc2MzUwMDExNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      ] 
+    },
+    { 
+      id: 10, 
+      name: 'Trovão Negro', 
+      registry: 'MM-2017-3210',
+      chip: '982000201732100',
+      marca: 'VV-010',
+      sex: 'Macho',
+      birthDate: '2017-03-10',
+      category: 'Reprodutor', 
+      age: '7 anos', 
+      haras: 'Vale Verde', 
+      status: 'Inativo', 
+      statusColor: 'bg-gray-500',
+      statusAtividade: 'Inativo',
+      motivoInativacao: 'Vendido',
+      dataInativacao: '2024-10-05',
+      statusHistorico: [
+        {
+          data: '2024-10-05',
+          statusAnterior: 'Ativo',
+          statusNovo: 'Inativo',
+          motivo: 'Vendido',
+          usuario: 'João Silva (Criador)'
+        }
+      ],
+      filhos: 8,
+      image: 'https://images.unsplash.com/photo-1656964353220-99aa5acc47e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibGFjayUyMHN0YWxsaW9uJTIwaG9yc2V8ZW58MXx8fHwxNzYzNTAwMTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', 
+      images: [
+        'https://images.unsplash.com/photo-1656964353220-99aa5acc47e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibGFjayUyMHN0YWxsaW9uJTIwaG9yc2V8ZW58MXx8fHwxNzYzNTAwMTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       ] 
     },
   ]);
@@ -468,9 +556,10 @@ export function BreederPlantelContent() {
       (filterSexo === 'machos' && animal.sex === 'Macho') ||
       (filterSexo === 'femeas' && animal.sex === 'Fêmea');
 
-    // Filtro de status
+    // Filtro de Status no Plantel (Ativos/Inativos)
     const matchesStatus = filterStatus === 'todos' || 
-      animal.status.toLowerCase().includes(filterStatus.toLowerCase());
+      (filterStatus === 'ativos' && (animal.statusAtividade === 'Ativo' || !animal.statusAtividade)) ||
+      (filterStatus === 'inativos' && animal.statusAtividade === 'Inativo');
 
     // Filtro de categoria (FASE 13)
     const matchesCategoria = filterCategoria === 'todos' || 
@@ -621,11 +710,9 @@ export function BreederPlantelContent() {
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
-                  <option value="todos">Todos os Status</option>
-                  <option value="ativo">Ativo</option>
-                  <option value="gestante">Gestante</option>
-                  <option value="em_cobertura">Em Cobertura</option>
-                  <option value="em_crescimento">Em Crescimento</option>
+                  <option value="todos">Status no Plantel</option>
+                  <option value="ativos">Ativos</option>
+                  <option value="inativos">Inativos</option>
                 </NativeSelect>
               </div>
               <button
