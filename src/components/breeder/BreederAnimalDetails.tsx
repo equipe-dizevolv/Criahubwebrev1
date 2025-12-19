@@ -28,6 +28,7 @@ interface Video {
   uploadDate: string;
   visibility: 'Público' | 'Privado';
   source: 'upload' | 'youtube' | 'vimeo';
+  caption?: string; // Legenda do vídeo
 }
 
 // FASE 33: Interface para Premiações
@@ -136,6 +137,7 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
     url: '',
     type: 'Marcha' as Video['type'],
     visibility: 'Público' as Video['visibility'],
+    caption: '',
   });
   // NOVOS ESTADOS: Modal de Inativação
   const [showInactivateModal, setShowInactivateModal] = useState(false);
@@ -423,7 +425,8 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
       duration: '2:45',
       uploadDate: '2024-11-15',
       visibility: 'Público',
-      source: 'youtube'
+      source: 'youtube',
+      caption: 'Marcha batida em pista de avaliação - Demonstração de regularidade e qualidade de andamento'
     },
     {
       id: 2,
@@ -434,7 +437,8 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
       duration: '5:20',
       uploadDate: '2024-10-20',
       visibility: 'Público',
-      source: 'youtube'
+      source: 'youtube',
+      caption: 'Apresentação que garantiu o 1º lugar na categoria Reprodutor Sênior'
     },
     {
       id: 3,
@@ -445,7 +449,8 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
       duration: '1:30',
       uploadDate: '2024-12-01',
       visibility: 'Privado',
-      source: 'upload'
+      source: 'upload',
+      caption: 'Temperamento dócil e interação positiva com descendentes'
     }
   ];
 
@@ -1341,6 +1346,15 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                         </div>
                       </div>
                       
+                      {/* Legenda do vídeo */}
+                      {video.caption && (
+                        <div className="px-4 py-2 bg-muted dark:bg-[#0d0d0d] border-b border-border dark:border-[rgba(255,255,255,0.1)]">
+                          <p className="text-xs text-muted-foreground dark:text-[#99a1af] text-center italic">
+                            {video.caption}
+                          </p>
+                        </div>
+                      )}
+                      
                       {/* Informações */}
                       <div className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">
@@ -1942,6 +1956,22 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                   <option value="Privado">🔒 Privado - Apenas você</option>
                 </NativeSelect>
               </div>
+
+              {/* Legenda do Vídeo */}
+              <div>
+                <label className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2 block">
+                  Legenda do Vídeo
+                </label>
+                <textarea
+                  defaultValue={videoToEdit.caption || ''}
+                  placeholder="Ex: Demonstração de marcha em pista de avaliação..."
+                  rows={3}
+                  className="w-full px-4 py-3 bg-muted dark:bg-[#0d0d0d] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-[#6b6b6b] focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white resize-none"
+                />
+                <p className="text-xs text-muted-foreground dark:text-[#99a1af] mt-1">
+                  Descrição curta sobre o conteúdo do vídeo (opcional)
+                </p>
+              </div>
             </div>
 
             {/* Footer */}
@@ -2164,6 +2194,23 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                     <option value="Privado">🔒 Privado - Apenas você</option>
                   </NativeSelect>
                 </div>
+
+                {/* Legenda do Vídeo */}
+                <div>
+                  <label className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2 block">
+                    Legenda do Vídeo
+                  </label>
+                  <textarea
+                    value={videoFormData.caption}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, caption: e.target.value })}
+                    placeholder="Ex: Demonstração de marcha em pista de avaliação..."
+                    rows={3}
+                    className="w-full px-4 py-3 bg-muted dark:bg-[#0d0d0d] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-[#6b6b6b] focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground dark:text-[#99a1af] mt-1">
+                    Descrição curta sobre o conteúdo do vídeo (opcional)
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -2179,7 +2226,7 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                 onClick={() => {
                   // Aqui seria a lógica de salvar (por enquanto apenas fecha)
                   setShowAddVideoModal(false);
-                  setVideoFormData({ title: '', url: '', type: 'Marcha', visibility: 'Público' });
+                  setVideoFormData({ title: '', url: '', type: 'Marcha', visibility: 'Público', caption: '' });
                 }}
                 className="px-6 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
               >
