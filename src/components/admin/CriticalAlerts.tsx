@@ -22,6 +22,17 @@ import {
 import { useTheme } from '../../contexts/ThemeContext';
 import { useState } from 'react';
 
+interface Alert {
+  id: string;
+  type: string;
+  client: string;
+  module: string;
+  date: string;
+  status: 'Aberto' | 'Fechado' | 'Em Análise';
+  urgency: 'Alta' | 'Média' | 'Baixa';
+  log: string;
+}
+
 export function CriticalAlerts() {
   const { theme } = useTheme();
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'resolved'>('all');

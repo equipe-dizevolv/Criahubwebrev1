@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Search, ChevronDown, AlertTriangle, X, CheckCircle2, Eye } from 'lucide-react';
 import { NativeSelect } from '../ui/native-select';
 
 interface Alert {
@@ -8,13 +8,17 @@ interface Alert {
   client: string;
   module: string;
   date: string;
-  status: 'Aberto' | 'Fechado';
+  status: 'Aberto' | 'Fechado' | 'Em Análise';
+  urgency: 'Alta' | 'Média' | 'Baixa';
+  log: string;
 }
 
 export function AdminCriticalAlertsContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [urgencyFilter, setUrgencyFilter] = useState('all');
   const [moduleFilter, setModuleFilter] = useState('all');
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
 
   // Dados dos alertas
   const alerts: Alert[] = [
@@ -25,6 +29,8 @@ export function AdminCriticalAlertsContent() {
       module: 'Plantel',
       date: '25/09/2025',
       status: 'Aberto',
+      urgency: 'Alta',
+      log: 'Erro ao sincronizar 5 registros de animais. Timeout na conexão com o banco de dados. Stack trace: Connection timeout after 30s...',
     },
     {
       id: 2,
@@ -33,6 +39,8 @@ export function AdminCriticalAlertsContent() {
       module: 'Assinaturas',
       date: '25/09/2025',
       status: 'Aberto',
+      urgency: 'Alta',
+      log: 'Cartão de crédito recusado. Código de erro: insufficient_funds. Tentativa 3 de 3.',
     },
     {
       id: 3,
@@ -41,6 +49,8 @@ export function AdminCriticalAlertsContent() {
       module: 'Plantel',
       date: '25/09/2025',
       status: 'Fechado',
+      urgency: 'Média',
+      log: 'Cliente atingiu 100% do limite de armazenamento (5GB). Upload bloqueado automaticamente.',
     },
     {
       id: 4,
@@ -48,7 +58,9 @@ export function AdminCriticalAlertsContent() {
       client: 'Haras Trovão',
       module: 'Assinaturas',
       date: '25/09/2025',
-      status: 'Fechado',
+      status: 'Em Análise',
+      urgency: 'Baixa',
+      log: 'Falha ao enviar e-mail de notificação. SMTP error: Connection refused.',
     },
   ];
 
@@ -87,6 +99,7 @@ export function AdminCriticalAlertsContent() {
             <option value="all">Filtrar por urgência</option>
             <option value="Aberto">Aberto</option>
             <option value="Fechado">Fechado</option>
+            <option value="Em Análise">Em Análise</option>
           </NativeSelect>
         </div>
 
@@ -127,6 +140,9 @@ export function AdminCriticalAlertsContent() {
                 <th className="px-4 py-4 text-left text-foreground dark:text-white">
                   Status
                 </th>
+                <th className="px-4 py-4 text-left text-foreground dark:text-white">
+                  Ações
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border dark:divide-[rgba(255,255,255,0.1)]">
@@ -152,11 +168,25 @@ export function AdminCriticalAlertsContent() {
                       className={`px-3 py-1 rounded-full text-sm ${
                         alert.status === 'Aberto'
                           ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : alert.status === 'Fechado'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                       }`}
                     >
                       {alert.status}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => {
+                        setSelectedAlert(alert);
+                        setShowDetailModal(true);
+                      }}
+                      className="px-3 py-1.5 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity text-sm flex items-center gap-1.5"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Ver Detalhes
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -186,7 +216,9 @@ export function AdminCriticalAlertsContent() {
                   className={`px-3 py-1 rounded-full text-sm ${
                     alert.status === 'Aberto'
                       ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                      : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                      : alert.status === 'Fechado'
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}
                 >
                   {alert.status}
@@ -216,6 +248,18 @@ export function AdminCriticalAlertsContent() {
                   <p className="text-foreground dark:text-white">{alert.date}</p>
                 </div>
               </div>
+
+              {/* Botão Ver Detalhes */}
+              <button
+                onClick={() => {
+                  setSelectedAlert(alert);
+                  setShowDetailModal(true);
+                }}
+                className="w-full px-4 py-2 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity text-sm flex items-center justify-center gap-2"
+              >
+                <Eye className="w-4 h-4" />
+                Ver Detalhes
+              </button>
             </div>
           ))}
         </div>
@@ -230,6 +274,89 @@ export function AdminCriticalAlertsContent() {
           </div>
         )}
       </div>
+
+      {/* Modal de Detalhes */}
+      {showDetailModal && selectedAlert && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-card dark:bg-[#1a1a1a] rounded-2xl p-6 w-[90%] max-w-2xl shadow-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-foreground dark:text-white">
+                Detalhes do Alerta
+              </h2>
+              <button
+                className="text-red-600 dark:text-red-400"
+                onClick={() => setShowDetailModal(false)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Tipo de Alerta
+              </p>
+              <p className="text-foreground dark:text-white">{selectedAlert.type}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Cliente Afetado
+              </p>
+              <p className="text-foreground dark:text-white">{selectedAlert.client}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Módulo
+              </p>
+              <p className="text-foreground dark:text-white">{selectedAlert.module}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Data
+              </p>
+              <p className="text-foreground dark:text-white">{selectedAlert.date}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Status
+              </p>
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedAlert.status === 'Aberto'
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    : selectedAlert.status === 'Fechado'
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                }`}
+              >
+                {selectedAlert.status}
+              </span>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Urgência
+              </p>
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedAlert.urgency === 'Alta'
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    : selectedAlert.urgency === 'Média'
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                }`}
+              >
+                {selectedAlert.urgency}
+              </span>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground dark:text-[#99a1af] mb-1">
+                Log de Erro
+              </p>
+              <pre className="text-foreground dark:text-white bg-muted dark:bg-[#0d0d0d] p-3 rounded-lg whitespace-pre-wrap">
+                {selectedAlert.log}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1132,6 +1132,10 @@
     width: calc(var(--spacing) * 64);
   }
 
+  .w-\[90\%\] {
+    width: 90%;
+  }
+
   .w-\[172px\] {
     width: 172px;
   }
@@ -1997,6 +2001,16 @@
 
   .bg-black {
     background-color: var(--color-black);
+  }
+
+  .bg-black\/30 {
+    background-color: #0000004d;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-black\/30 {
+      background-color: color-mix(in oklab, var(--color-black) 30%, transparent);
+    }
   }
 
   .bg-black\/40 {
@@ -2967,6 +2981,10 @@
 
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
   }
 
   .text-\[\#1a1a1a\] {
