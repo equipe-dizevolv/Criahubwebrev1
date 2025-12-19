@@ -293,11 +293,18 @@ function AddTutorialModal({ onClose }: any) {
   const [title, setTitle] = useState('');
   const [duration, setDuration] = useState('');
   const [category, setCategory] = useState('');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setVideoFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !duration || !category) {
-      toast.error('Preencha todos os campos');
+    if (!title || !duration || !category || !videoFile) {
+      toast.error('Preencha todos os campos e faça upload do vídeo');
       return;
     }
     // Aqui você pode adicionar a lógica para salvar o tutorial no banco de dados
@@ -306,8 +313,8 @@ function AddTutorialModal({ onClose }: any) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-card dark:bg-[#1a1a1a] rounded-2xl p-6 border border-border dark:border-[rgba(255,255,255,0.1)] w-full max-w-2xl">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+      <div className="bg-card dark:bg-[#1a1a1a] rounded-2xl p-6 border border-border dark:border-[rgba(255,255,255,0.1)] w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl text-foreground dark:text-white">Adicionar Tutorial</h3>
           <button
@@ -325,16 +332,18 @@ function AddTutorialModal({ onClose }: any) {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full pl-4 pr-4 py-4 bg-card dark:bg-[#1a1a1a] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-xl text-foreground dark:text-white focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white"
+                placeholder="Digite o título do tutorial"
+                className="w-full px-4 py-3 bg-muted dark:bg-[#0d0d0d] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-[#6b6b6b] focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white"
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground dark:text-[#99a1af] block mb-2">Duração</label>
+              <label className="text-sm text-muted-foreground dark:text-[#99a1af] block mb-2">Duração (ex: 8:15)</label>
               <input
                 type="text"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="w-full pl-4 pr-4 py-4 bg-card dark:bg-[#1a1a1a] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-xl text-foreground dark:text-white focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white"
+                placeholder="8:15"
+                className="w-full px-4 py-3 bg-muted dark:bg-[#0d0d0d] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-[#6b6b6b] focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white"
               />
             </div>
             <div>
@@ -342,7 +351,6 @@ function AddTutorialModal({ onClose }: any) {
               <NativeSelect
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full pl-4 pr-4 py-4 bg-card dark:bg-[#1a1a1a] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-xl text-foreground dark:text-white focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-white"
               >
                 <option value="">Selecione uma categoria</option>
                 <option value="Usuários">Usuários</option>
@@ -355,11 +363,67 @@ function AddTutorialModal({ onClose }: any) {
                 <option value="Segurança">Segurança</option>
               </NativeSelect>
             </div>
+            <div>
+              <label className="text-sm text-muted-foreground dark:text-[#99a1af] block mb-2">Vídeo do Tutorial</label>
+              <div className="border-2 border-dashed border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg p-6 text-center hover:border-primary dark:hover:border-white transition-colors">
+                <input
+                  type="file"
+                  id="video-upload"
+                  accept="video/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="video-upload"
+                  className="cursor-pointer flex flex-col items-center gap-3"
+                >
+                  <div className="bg-muted dark:bg-[#0d0d0d] p-4 rounded-full">
+                    <Upload className="w-8 h-8 text-primary dark:text-white" />
+                  </div>
+                  {videoFile ? (
+                    <div>
+                      <p className="text-foreground dark:text-white font-medium">
+                        {videoFile.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-[#99a1af] mt-1">
+                        {(videoFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setVideoFile(null);
+                        }}
+                        className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
+                      >
+                        Remover arquivo
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-foreground dark:text-white font-medium">
+                        Clique para fazer upload do vídeo
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-[#99a1af] mt-1">
+                        MP4, MOV, AVI até 500MB
+                      </p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
           </div>
-          <div className="mt-6">
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-3 bg-muted dark:bg-[#0d0d0d] text-foreground dark:text-white rounded-lg hover:opacity-80 transition-opacity"
+            >
+              Cancelar
+            </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity text-sm"
+              className="flex-1 px-4 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
             >
               Adicionar Tutorial
             </button>

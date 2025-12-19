@@ -222,20 +222,9 @@ export function AwardsDetailModal({ awards, animalName, onClose }: AwardsDetailM
 
         {/* Footer com Ações */}
         <div className="p-6 border-t border-gray-200 dark:border-[rgba(255,255,255,0.1)] bg-gray-50 dark:bg-[#0d0d0d] flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <button className="flex-1 px-4 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-            <Upload className="w-4 h-4" />
-            Importar Novas Premiações ABCCMM
-          </button>
-          <button className="flex-1 px-4 py-3 bg-white dark:bg-[#2a2a2a] text-foreground dark:text-white border border-gray-300 dark:border-[rgba(255,255,255,0.1)] rounded-lg hover:bg-gray-50 dark:hover:bg-[#3a3a3a] transition-colors flex items-center justify-center gap-2">
+          <button className="w-full sm:w-auto px-6 py-3 bg-white dark:bg-[#2a2a2a] text-foreground dark:text-white border border-gray-300 dark:border-[rgba(255,255,255,0.1)] rounded-lg hover:bg-gray-50 dark:hover:bg-[#3a3a3a] transition-colors flex items-center justify-center gap-2">
             <Download className="w-4 h-4" />
             Exportar Relatório (PDF)
-          </button>
-          <button
-            onClick={() => setShowRegisterModal(true)}
-            className="flex-1 px-4 py-3 bg-primary dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Registrar Nova Premiação
           </button>
         </div>
       </div>

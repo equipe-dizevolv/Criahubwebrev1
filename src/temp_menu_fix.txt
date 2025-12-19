@@ -1,0 +1,28 @@
+                            {activeVideoMenu === video.id && (
+                              <div className="absolute right-0 top-8 w-48 bg-white dark:bg-[#1a1a1a] border border-border dark:border-[rgba(255,255,255,0.1)] rounded-lg shadow-lg z-50 overflow-hidden">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setVideoToEdit(video);
+                                    setShowEditVideoModal(true);
+                                    setActiveVideoMenu(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left text-sm text-foreground dark:text-white hover:bg-muted dark:hover:bg-[#0d0d0d] transition-colors flex items-center gap-2"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                  Editar
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setVideoToDelete(video);
+                                    setShowDeleteVideoModal(true);
+                                    setActiveVideoMenu(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors flex items-center gap-2"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Excluir
+                                </button>
+                              </div>
+                            )}

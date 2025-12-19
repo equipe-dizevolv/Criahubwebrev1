@@ -1339,11 +1339,6 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                             {video.duration}
                           </div>
                         )}
-                        
-                        {/* Badge de Visibilidade */}
-                        <div className="absolute top-2 left-2 px-2 py-1 bg-black/80 rounded text-white text-xs flex items-center gap-1">
-                          {video.visibility === 'Privado' ? '🔒' : '🌐'} {video.visibility}
-                        </div>
                       </div>
                       
                       {/* Legenda do vídeo */}
@@ -1946,17 +1941,6 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                 </NativeSelect>
               </div>
 
-              {/* Visibilidade */}
-              <div>
-                <label className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2 block">
-                  Visibilidade
-                </label>
-                <NativeSelect defaultValue={videoToEdit.visibility}>
-                  <option value="Público">🌐 Público - Visível para todos</option>
-                  <option value="Privado">🔒 Privado - Apenas você</option>
-                </NativeSelect>
-              </div>
-
               {/* Legenda do Vídeo */}
               <div>
                 <label className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2 block">
@@ -2178,20 +2162,6 @@ export function BreederAnimalDetails({ animal, onBack, onEdit, onViewAnimal, ini
                     <option value="Personalidade">Personalidade</option>
                     <option value="Genealogia">Genealogia</option>
                     <option value="Outro">Outro</option>
-                  </NativeSelect>
-                </div>
-
-                {/* Visibilidade */}
-                <div>
-                  <label className="text-sm text-muted-foreground dark:text-[#99a1af] mb-2 block">
-                    Visibilidade
-                  </label>
-                  <NativeSelect
-                    value={videoFormData.visibility}
-                    onChange={(e) => setVideoFormData({ ...videoFormData, visibility: e.target.value as Video['visibility'] })}
-                  >
-                    <option value="Público">🌐 Público - Visível para todos</option>
-                    <option value="Privado">🔒 Privado - Apenas você</option>
                   </NativeSelect>
                 </div>
 
