@@ -19,9 +19,7 @@ export function AdminCriticalAlertsContent() {
   const [moduleFilter, setModuleFilter] = useState('all');
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-
-  // Dados dos alertas
-  const alerts: Alert[] = [
+  const [alertsList, setAlertsList] = useState<Alert[]>([
     {
       id: 1,
       type: 'Falha de Sincronização',
@@ -62,10 +60,22 @@ export function AdminCriticalAlertsContent() {
       urgency: 'Baixa',
       log: 'Falha ao enviar e-mail de notificação. SMTP error: Connection refused.',
     },
-  ];
+  ]);
+
+  // Função para alterar o status do alerta
+  const handleChangeStatus = (newStatus: Alert['status']) => {
+    if (selectedAlert) {
+      setAlertsList(alertsList.map(alert =>
+        alert.id === selectedAlert.id
+          ? { ...alert, status: newStatus }
+          : alert
+      ));
+      setSelectedAlert({ ...selectedAlert, status: newStatus });
+    }
+  };
 
   // Filtrar alertas
-  const filteredAlerts = alerts.filter((alert) => {
+  const filteredAlerts = alertsList.filter((alert) => {
     const matchesSearch = alert.client.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesModule = moduleFilter === 'all' || alert.module === moduleFilter;
     const matchesUrgency = urgencyFilter === 'all' || alert.status === urgencyFilter;
@@ -353,6 +363,35 @@ export function AdminCriticalAlertsContent() {
               <pre className="text-foreground dark:text-white bg-muted dark:bg-[#0d0d0d] p-3 rounded-lg whitespace-pre-wrap">
                 {selectedAlert.log}
               </pre>
+            </div>
+
+            {/* Ações do Alerta */}
+            <div className="mt-6 pt-4 border-t border-border dark:border-[#3a3a3a] flex flex-col sm:flex-row gap-3">
+              {selectedAlert.status !== 'Em Análise' && (
+                <button
+                  onClick={() => handleChangeStatus('Em Análise')}
+                  className="flex-1 px-4 py-2 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-lg hover:opacity-80 transition-opacity"
+                >
+                  Marcar como Em Análise
+                </button>
+              )}
+              {selectedAlert.status !== 'Fechado' && (
+                <button
+                  onClick={() => handleChangeStatus('Fechado')}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white dark:bg-green-700 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Marcar como Resolvido
+                </button>
+              )}
+              {selectedAlert.status === 'Fechado' && (
+                <button
+                  onClick={() => handleChangeStatus('Aberto')}
+                  className="flex-1 px-4 py-2 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:opacity-80 transition-opacity"
+                >
+                  Reabrir Alerta
+                </button>
+              )}
             </div>
           </div>
         </div>

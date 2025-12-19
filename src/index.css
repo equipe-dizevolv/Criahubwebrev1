@@ -4691,6 +4691,10 @@
     }
   }
 
+  .dark\:bg-green-700:where(.dark, .dark *) {
+    background-color: var(--color-green-700);
+  }
+
   .dark\:bg-green-900\/20:where(.dark, .dark *) {
     background-color: color-mix(in srgb, oklch(.393 .095 152.535) 20%, transparent);
   }
